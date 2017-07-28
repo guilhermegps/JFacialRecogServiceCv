@@ -17,6 +17,7 @@ import org.opencv.core.Size;
 import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.imgproc.Imgproc;
 import org.opencv.objdetect.CascadeClassifier;
+import org.opencv.objdetect.Objdetect;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -38,25 +39,27 @@ public class BiometriaServico {
 		    fos.write(bImg);
 		    fos.close();
 
-		    CascadeClassifier cascadeClassifier = new CascadeClassifier("/opt/opencv_xml/haarcascade_frontalface_alt_tree.xml");
+		    CascadeClassifier cascadeClassifier = new CascadeClassifier(System.getProperty("user.dir") + "/src/main/java/br/com/eigmercados/snr/data/haarcascades/haarcascade_frontalface_alt.xml");
 		    Mat mat = Imgcodecs.imread(img);
 		    
 		    MatOfRect matOfRect = detectarFaces(cascadeClassifier, mat);
 		    
-		    List propsFaces = obterDadosFaces(matOfRect);
+//		    List<propriedadesFaceDTO> propsFaces = obterDadosFaces(matOfRect);
 		    
-		    BufferedImage imagemCorteDesfoque = DesfocarImagem(mat);
+//		    BufferedImage imagemCorteDesfoque = DesfocarImagem(mat);
 		    
-		    propsFaces = CortarImagem(propsFaces, imagemCorteDesfoque);
+//		    propsFaces = CortarImagem(propsFaces, imagemCorteDesfoque);
 		    		    
+		    ArquivoUtils.desenharRetangulo(matOfRect, mat);
 		    BufferedImage imagemSemEfeitos = ArquivoUtils.converterParaImage(mat);
 		    
-		    imagemCorteDesfoque = ArquivoUtils.juntarImagens(propsFaces, imagemSemEfeitos);
+//		    imagemCorteDesfoque = ArquivoUtils.juntarImagens(propsFaces, imagemSemEfeitos);
 		    
 		    File outputfile = new File(img);
 		    
 		    try {
-		    	ImageIO.write(imagemCorteDesfoque, "jpg", outputfile);
+//		    	ImageIO.write(imagemCorteDesfoque, "jpg", outputfile);
+		    	ImageIO.write(imagemSemEfeitos, "jpg", outputfile);
 		    } catch (IOException e) {
 		    	e.printStackTrace();
 		    }
@@ -68,7 +71,11 @@ public class BiometriaServico {
 	//Método que detecta as faces
 	public MatOfRect detectarFaces(CascadeClassifier cascadeClassifier, Mat mat){
 		MatOfRect matOfRect = new MatOfRect();
-		cascadeClassifier.detectMultiScale(mat, matOfRect);
+		
+		Mat grayFrame = ArquivoUtils.escalaCinzaImagem(mat);
+		
+		cascadeClassifier.detectMultiScale(grayFrame, matOfRect);
+//		cascadeClassifier.detectMultiScale(mat, matOfRect, 1.1, 2, 0 | Objdetect.CASCADE_SCALE_IMAGE, new Size(), new Size());
 		return matOfRect;
 	}
 	

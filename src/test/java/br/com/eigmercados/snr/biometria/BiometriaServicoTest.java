@@ -15,7 +15,7 @@ public class BiometriaServicoTest extends AbstractTest {
 
 	@Test
 	public void recuperar() {
-		File f = new File("/tmp/ori.jpg");
+		File f = new File("/tmp/ori2.jpg");
 		servico.reconhecimentoImagem(getBytes(f));
 	}
 

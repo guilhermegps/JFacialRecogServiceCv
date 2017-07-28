@@ -18,7 +18,7 @@ public class BiometriaResource {
 	private BiometriaServico servico;
 
 	@POST
-	public Response assinar(RequisicaoEncriptada requisicao) {
+	public Response reconhecimento(RequisicaoEncriptada requisicao) {
 		return Response.ok().build();
 	}
 
