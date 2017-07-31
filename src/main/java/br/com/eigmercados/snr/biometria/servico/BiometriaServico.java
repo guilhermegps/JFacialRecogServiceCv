@@ -9,6 +9,7 @@ import java.util.List;
 
 import javax.imageio.ImageIO;
 
+import org.apache.tomcat.util.codec.binary.Base64;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfRect;
@@ -17,12 +18,13 @@ import org.opencv.core.Size;
 import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.imgproc.Imgproc;
 import org.opencv.objdetect.CascadeClassifier;
-import org.opencv.objdetect.Objdetect;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import br.com.eigmercados.snr.biometria.dto.propriedadesFaceDTO;
+import br.com.eigmercados.snr.tools.RequisicaoEncriptada;
 import br.com.eigmercados.snr.tools.utils.ArquivoUtils;
 
 @Service
@@ -30,12 +32,19 @@ public class BiometriaServico {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(BiometriaServico.class);
 
-	public void reconhecimentoImagem(byte[] bImg){
+	@Transactional
+	public File reconhecimento(RequisicaoEncriptada requisicao){
+		byte[] bImg = Base64.decodeBase64(requisicao.getMensagem());
+		return reconhecimentoImagem(bImg);
+	}
+
+	public File reconhecimentoImagem(byte[] bImg){
 		System.loadLibrary(Core.NATIVE_LIBRARY_NAME); 
 		
 		try {
 			String img = "/tmp/img.jpg";
 		    FileOutputStream fos = new FileOutputStream(img);
+		    bImg = ArquivoUtils.convertPNGinJPG(bImg);
 		    fos.write(bImg);
 		    fos.close();
 
@@ -60,11 +69,15 @@ public class BiometriaServico {
 		    try {
 //		    	ImageIO.write(imagemCorteDesfoque, "jpg", outputfile);
 		    	ImageIO.write(imagemSemEfeitos, "jpg", outputfile);
+		    	
+		    	return outputfile;
 		    } catch (IOException e) {
-		    	e.printStackTrace();
+				LOGGER.error(e.getCause().getMessage());
+				throw new RuntimeException(e.getCause());
 		    }
 		} catch (Exception e) {
-	    	e.printStackTrace();
+			LOGGER.error(e.getCause().getMessage());
+			throw new RuntimeException(e.getCause());
 		}
 	}
 	

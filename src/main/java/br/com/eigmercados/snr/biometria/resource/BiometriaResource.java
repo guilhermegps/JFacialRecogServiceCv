@@ -19,7 +19,7 @@ public class BiometriaResource {
 
 	@POST
 	public Response reconhecimento(RequisicaoEncriptada requisicao) {
-		return Response.ok().build();
+		return Response.ok(servico.reconhecimento(requisicao)).build();
 	}
 
 }

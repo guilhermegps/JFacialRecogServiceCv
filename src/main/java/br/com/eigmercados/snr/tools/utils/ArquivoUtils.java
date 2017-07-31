@@ -1,9 +1,13 @@
 package br.com.eigmercados.snr.tools.utils;
 
+import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
@@ -15,10 +19,8 @@ import org.opencv.core.MatOfByte;
 import org.opencv.core.MatOfRect;
 import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
-import org.opencv.core.Size;
 import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.imgproc.Imgproc;
-import org.opencv.objdetect.Objdetect;
 import org.springframework.stereotype.Component;
 
 import br.com.eigmercados.snr.biometria.dto.propriedadesFaceDTO;
@@ -84,5 +86,41 @@ public class ArquivoUtils {
 		Imgproc.equalizeHist(grayFrame, grayFrame);
 		
 		return grayFrame;
+	}
+	
+	public static byte[] convertPNGinJPG(byte[] bImg) {
+		try {
+			String img = "/tmp/convert.png";
+		    FileOutputStream fos = new FileOutputStream(img);
+		    fos.write(bImg);
+		    fos.close();
+		    
+		    File convert = new File(img);
+
+			// read image file
+			BufferedImage bufferedImage = ImageIO.read(convert);
+			convert.delete();
+
+			// create a blank, RGB, same width and height, and a white
+			// background
+			BufferedImage newBufferedImage = new BufferedImage(bufferedImage.getWidth(), bufferedImage.getHeight(),
+					BufferedImage.TYPE_INT_RGB);
+			newBufferedImage.createGraphics().drawImage(bufferedImage, 0, 0, Color.WHITE, null);
+
+			ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+
+			// write to jpeg file
+			ImageIO.write(newBufferedImage, "jpg", outputStream);
+			
+			newBufferedImage.flush();
+			byte[] imageInByte = outputStream.toByteArray();
+			outputStream.close();
+			
+			return imageInByte;
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		return bImg;
 	}
 }
