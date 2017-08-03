@@ -14,10 +14,10 @@ import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfRect;
 import org.opencv.core.Rect;
-import org.opencv.core.Size;
 import org.opencv.imgcodecs.Imgcodecs;
-import org.opencv.imgproc.Imgproc;
 import org.opencv.objdetect.CascadeClassifier;
+import org.bytedeco.javacpp.opencv_face.FaceRecognizer;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -109,27 +109,27 @@ public class BiometriaServico {
 		 return dados;
 	}
 
-	public BufferedImage DesfocarImagem(Mat mat){  
-		mat = Desfocar(mat);
-	  
-		return ArquivoUtils.converterParaImage(mat);
-	}
+//	public BufferedImage DesfocarImagem(Mat mat){  
+//		mat = Desfocar(mat);
+//	  
+//		return ArquivoUtils.converterParaImage(mat);
+//	}
 		 
-	private Mat Desfocar(Mat image){     
-		Mat destination = new Mat(image.rows(),image.cols(),image.type());
-	         
-		Imgproc.GaussianBlur(image, destination,new Size(45,45), 0);
-	  
-		return destination;
-	}
+//	private Mat Desfocar(Mat image){     
+//		Mat destination = new Mat(image.rows(),image.cols(),image.type());
+//	         
+//		Imgproc.GaussianBlur(image, destination,new Size(45,45), 0);
+//	  
+//		return destination;
+//	}
 	
-	public List<propriedadesFaceDTO> CortarImagem(List<propriedadesFaceDTO> dados, BufferedImage imagem){
-		  
-		for(propriedadesFaceDTO dado : dados){
-			dado.setImageCortada(imagem.getSubimage(dado.getX(), dado.getY(), dado.getWidth(), dado.getHeight()));
-		}
-		  
-		return dados;
-	}
+//	public List<propriedadesFaceDTO> CortarImagem(List<propriedadesFaceDTO> dados, BufferedImage imagem){
+//		  
+//		for(propriedadesFaceDTO dado : dados){
+//			dado.setImageCortada(imagem.getSubimage(dado.getX(), dado.getY(), dado.getWidth(), dado.getHeight()));
+//		}
+//		  
+//		return dados;
+//	}
 
 }

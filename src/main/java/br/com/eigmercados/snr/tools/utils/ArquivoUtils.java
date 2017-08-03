@@ -103,8 +103,7 @@ public class ArquivoUtils {
 
 			// create a blank, RGB, same width and height, and a white
 			// background
-			BufferedImage newBufferedImage = new BufferedImage(bufferedImage.getWidth(), bufferedImage.getHeight(),
-					BufferedImage.TYPE_INT_RGB);
+			BufferedImage newBufferedImage = new BufferedImage(bufferedImage.getWidth(), bufferedImage.getHeight(), BufferedImage.TYPE_INT_RGB);
 			newBufferedImage.createGraphics().drawImage(bufferedImage, 0, 0, Color.WHITE, null);
 
 			ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
