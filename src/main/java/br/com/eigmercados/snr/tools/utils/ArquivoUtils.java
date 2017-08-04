@@ -7,9 +7,11 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.imageio.ImageIO;
@@ -19,8 +21,10 @@ import org.opencv.core.MatOfByte;
 import org.opencv.core.MatOfRect;
 import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
+import org.opencv.core.Size;
 import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.imgproc.Imgproc;
+import org.opencv.objdetect.CascadeClassifier;
 import org.springframework.stereotype.Component;
 
 import br.com.eigmercados.snr.biometria.dto.propriedadesFaceDTO;
@@ -121,5 +125,75 @@ public class ArquivoUtils {
 		}
 
 		return bImg;
+	}
+	
+	//Método que detecta as faces
+	public static MatOfRect detectarFaces(CascadeClassifier cascadeClassifier, Mat mat){
+		MatOfRect matOfRect = new MatOfRect();
+		
+		Mat grayFrame = ArquivoUtils.escalaCinzaImagem(mat);
+		
+		cascadeClassifier.detectMultiScale(grayFrame, matOfRect);
+//		cascadeClassifier.detectMultiScale(mat, matOfRect, 1.1, 2, 0 | Objdetect.CASCADE_SCALE_IMAGE, new Size(), new Size());
+		return matOfRect;
+	}
+	
+	// Método que retorna a posição X e Y das faces
+	public static List<propriedadesFaceDTO> obterDadosFaces(MatOfRect matOfRect){
+		 List<propriedadesFaceDTO> dados = new ArrayList<propriedadesFaceDTO>();
+		  
+		 for(Rect rect : matOfRect.toArray()) {
+			 propriedadesFaceDTO prop = new propriedadesFaceDTO();
+			 prop.setX(rect.x);
+			 prop.setY(rect.y);
+			 prop.setHeight(rect.height);
+			 prop.setWidth(rect.width);
+			   
+			 dados.add(prop);
+		 }
+		  
+		 return dados;
+	}
+	
+	public static List<byte[]> extrairFaces(byte[] img, CascadeClassifier cascadeClassifier, Mat mat) {
+	    MatOfRect matOfRect = detectarFaces(cascadeClassifier, mat);
+    	List<propriedadesFaceDTO> propFaces = obterDadosFaces(matOfRect);
+    	
+    	return extrairFaces(img, propFaces);
+	}
+	
+	public static List<byte[]> extrairFaces(byte[] img, List<propriedadesFaceDTO> propFaces) {
+	    ByteArrayInputStream bais = new ByteArrayInputStream(img);
+	    List<byte[]> faces = new ArrayList<>();
+	    
+	    try {	    	
+	        Size sz = new Size(250,250);
+			BufferedImage in = ImageIO.read(bais);
+			for(propriedadesFaceDTO propFace : propFaces){
+				ByteArrayOutputStream baos = new ByteArrayOutputStream();
+				ImageIO.write( in.getSubimage(propFace.getX(), propFace.getY(), propFace.getWidth(), propFace.getHeight()), "jpg", baos );
+				baos.flush();
+				byte[] imageInByte = baos.toByteArray();
+				baos.close();
+				
+				faces.add(imageInByte);
+			}
+	    } catch (Exception e) {
+	        throw new RuntimeException(e);
+	    }
+		
+		return faces;
+	}
+
+	public static byte[] getBytes(File file) {
+		int len = (int) file.length();
+		byte[] sendBuf = new byte[len];
+		FileInputStream inFile = null;
+		try {
+			inFile = new FileInputStream(file);
+			inFile.read(sendBuf, 0, len);
+		} catch (Exception e) {}
+		
+		return sendBuf;
 	}
 }

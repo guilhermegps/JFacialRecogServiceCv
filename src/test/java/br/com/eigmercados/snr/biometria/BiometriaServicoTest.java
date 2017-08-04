@@ -1,7 +1,8 @@
 package br.com.eigmercados.snr.biometria;
 
 import java.io.File;
-import java.io.FileInputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,29 +21,38 @@ public class BiometriaServicoTest extends AbstractTest {
 //		servico.reconhecimentoImagem(getBytes(f));
 //	}
 	
+//	@Test
+//	public void reconehcimento(){
+//		File db[] = new File[3];
+//		db[0] = new File("/tmp/img_test/tim2.jpg");
+//		db[1] = new File("/tmp/img_test/guioc.jpg");
+//		db[2] = new File("/tmp/img_test/drauzio.jpg");
+////		db[3] = new File("/tmp/img_test/out.jpg");
+////		db[4] = new File("/tmp/img_test/guioc2.jpg");
+//		
+//		File base = new File("/tmp/img_test/guioc.jpg");
+//		System.out.println(
+//				ReconhecimentoFacialUtils.reconhecerFaceImagens(base, db)
+//		);
+//	}
+	
 	@Test
-	public void reconehcimento(){
-		File db[] = new File[2];
-		db[0] = new File("/tmp/out.jpg");
-		db[0] = new File("/tmp/guioc.jpg");
-		db[1] = new File("/tmp/gui.jpg");
+	public void reconhecimento(){
+		List<byte[]> db = new ArrayList<>();
+		db.add(
+			servico.extrairRosto(new File("/tmp/img_test/tim2.jpg")) 
+		);
+		db.add(
+			servico.extrairRosto(new File("/tmp/img_test/guioc.jpg")) 
+		);
+		db.add(
+			servico.extrairRosto(new File("/tmp/img_test/drauzio.jpg")) 
+		);
 		
-		File base = new File("/tmp/tim.jpg");
+		byte base[] = servico.extrairRosto(new File("/tmp/img_test/gui.jpg"));
+		
 		System.out.println(
-				ReconhecimentoFacialUtils.reconhecerFaceImagens(base, db)
+			ReconhecimentoFacialUtils.reconhecerFaceImagens(base, db)
 		);
 	}
-
-	public byte[] getBytes(File file) {
-		int len = (int) file.length();
-		byte[] sendBuf = new byte[len];
-		FileInputStream inFile = null;
-		try {
-			inFile = new FileInputStream(file);
-			inFile.read(sendBuf, 0, len);
-		} catch (Exception e) {}
-		
-		return sendBuf;
-	}
-
 }
