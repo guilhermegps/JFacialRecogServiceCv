@@ -38,18 +38,20 @@ public class BiometriaServicoTest extends AbstractTest {
 	
 	@Test
 	public void reconhecimento(){
+		nu.pattern.OpenCV.loadLocally();
+		
 		List<byte[]> db = new ArrayList<>();
 		db.add(
-			servico.extrairRosto(new File("/tmp/img_test/tim2.jpg")) 
+			servico.extrairRosto(new File("/tmp/img_test/jim3.jpg")) 
 		);
 		db.add(
-			servico.extrairRosto(new File("/tmp/img_test/guioc.jpg")) 
+			servico.extrairRosto(new File("/tmp/img_test/gui.jpg")) 
 		);
 		db.add(
-			servico.extrairRosto(new File("/tmp/img_test/drauzio.jpg")) 
+			servico.extrairRosto(new File("/tmp/img_test/tim.jpg")) 
 		);
 		
-		byte base[] = servico.extrairRosto(new File("/tmp/img_test/gui.jpg"));
+		byte base[] = servico.extrairRosto(new File("/tmp/img_test/tim2.jpg"));
 		
 		System.out.println(
 			ReconhecimentoFacialUtils.reconhecerFaceImagens(base, db)

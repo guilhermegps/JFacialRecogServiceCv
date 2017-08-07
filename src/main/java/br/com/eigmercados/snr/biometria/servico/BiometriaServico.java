@@ -32,8 +32,6 @@ public class BiometriaServico {
 	}
 	
 	public byte[] extrairRosto(File f){
-		nu.pattern.OpenCV.loadLocally();
-		
 		try {
 		    CascadeClassifier cascadeClassifier = new CascadeClassifier(System.getProperty("user.dir") + "/src/main/java/br/com/eigmercados/snr/data/haarcascades/haarcascade_frontalface_alt.xml");
 		    Mat mat = Imgcodecs.imread(f.getAbsolutePath());

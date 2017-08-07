@@ -1,7 +1,7 @@
 package br.com.eigmercados.snr.tools.utils;
 
 import static org.bytedeco.javacpp.opencv_core.CV_32SC1;
-import static org.bytedeco.javacpp.opencv_face.createFisherFaceRecognizer;
+import static org.bytedeco.javacpp.opencv_face.*;
 import static org.bytedeco.javacpp.opencv_imgcodecs.CV_LOAD_IMAGE_GRAYSCALE;
 import static org.bytedeco.javacpp.opencv_imgcodecs.imread;
 import static org.bytedeco.javacpp.opencv_imgproc.resize;
@@ -71,9 +71,9 @@ public class ReconhecimentoFacialUtils {
             personCount++;
         }
 
-        FaceRecognizer faceRecognizer = createFisherFaceRecognizer();
+        //FaceRecognizer faceRecognizer = createFisherFaceRecognizer();
         // FaceRecognizer faceRecognizer = createEigenFaceRecognizer();
-        //FaceRecognizer faceRecognizer = createLBPHFaceRecognizer(1, 8, 8, 8, 150d);
+        FaceRecognizer faceRecognizer = createLBPHFaceRecognizer(1, 8, 8, 8, 150d);
 
         // Treinamento
         faceRecognizer.train(images, labels);
@@ -82,12 +82,12 @@ public class ReconhecimentoFacialUtils {
         DoublePointer confidence = new DoublePointer(1);
         faceRecognizer.predict(matBase, prediction, confidence);
         
-        if(prediction.get(0) >= 0 && prediction.get(0) < names.length /*&& confidence.get(0)<8*/){
+        if(prediction.get(0) >= 0 && prediction.get(0) < names.length && confidence.get(0)<40){
             System.out.println("Predicted label: " + names[prediction.get(0)]);
             return confidence.get(0);
         }
         
-        System.out.println("Unrecognizable");
+        System.out.println("Unrecognizable: " + names[prediction.get(0)]);
         return confidence.get(0);
     }
     
